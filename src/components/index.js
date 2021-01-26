@@ -23,7 +23,7 @@ function isEmpty(obj) {
 
 export default function SlateTranscriptEditor(props) {
   const { Player, confDemo } = useGlobalContext();
-  const { getTime } = Player;
+  const { getTime } = Player; 
 
   // const typeAnnot = confDemo.getConf().typeAnnotationDialogue;
   const actLanguage = confDemo.getConf().actLanguage;
