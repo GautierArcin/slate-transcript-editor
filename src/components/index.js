@@ -1,19 +1,45 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import PropTypes from "prop-types";
-import path from "path";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Tooltip from "react-bootstrap/Tooltip";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import { createEditor, Editor, Transforms } from "slate";
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import path from 'path';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import { createEditor, Editor, Transforms } from 'slate';
 // https://docs.slatejs.org/walkthroughs/01-installing-slate
 // Import the Slate components and React plugin.
-import { Slate, Editable, withReact, ReactEditor } from "slate-react";
-import { withHistory } from "slate-history";
-import convertDpeToSlate from "../util/dpe-to-slate";
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { withHistory } from 'slate-history';
+import convertDpeToSlate from '../util/dpe-to-slate';
+// import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+// import { withHistory } from 'slate-history';
+// import {
+//   faSave,
+//   faShare,
+//   faUndo,
+//   faSync,
+//   faInfoCircle,
+//   faICursor,
+//   faMehBlank,
+//   faPause,
+//   faMusic,
+//   faClosedCaptioning,
+// } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { shortTimecode } from '../util/timecode-converter';
+// import slateToText from '../util/export-adapters/txt';
+// import download from '../util/downlaod/index.js';
+// import convertDpeToSlate from '../util/dpe-to-slate';
+// import slateToDocx from '../util/export-adapters/docx';
+// // TODO: This should be moved in export utils
+// import insertTimecodesInline from '../util/inline-interval-timecodes';
+// import pluck from '../util/pluk';
+// import subtitlesGenerator from '../util/export-adapters/subtitles-generator/index.js';
+// import subtitlesExportOptionsList from '../util/export-adapters/subtitles-generator/list.js';
+// import updateTimestamps, { converSlateToDpe } from '../util/update-timestamps';
 
-import { useGlobalContext } from "../../../components/Provider";
+import { useGlobalContext } from '../../../components/Provider';
 
 const TOOTLIP_LONGER_DELAY = 2000;
 
@@ -23,7 +49,7 @@ function isEmpty(obj) {
 
 export default function SlateTranscriptEditor(props) {
   const { Player, confDemo } = useGlobalContext();
-  const { getTime } = Player; 
+  const { getTime } = Player;
 
   // const typeAnnot = confDemo.getConf().typeAnnotationDialogue;
   const actLanguage = confDemo.getConf().actLanguage;
@@ -37,10 +63,8 @@ export default function SlateTranscriptEditor(props) {
   const [currentTime, setCurrentTime] = useState(0);
   const editor = useMemo(() => withReact(withHistory(createEditor())), []);
   const [value, setValue] = useState([]);
-  const defaultShowSpeakersPreference =
-    typeof props.showSpeakers === "boolean" ? props.showSpeakers : true;
-  const defaultShowTimecodesPreference =
-    typeof props.showTimecodes === "boolean" ? props.showTimecodes : true;
+  const defaultShowSpeakersPreference = typeof props.showSpeakers === 'boolean' ? props.showSpeakers : true;
+  const defaultShowTimecodesPreference = typeof props.showTimecodes === 'boolean' ? props.showTimecodes : true;
   // const [showSpeakers, setShowSpeakers] = useState(
   //   defaultShowSpeakersPreference
   // );
@@ -50,6 +74,26 @@ export default function SlateTranscriptEditor(props) {
 
   const [showSpeakers] = useState(defaultShowSpeakersPreference);
   const [showTimecodes] = useState(defaultShowTimecodesPreference);
+  // const defaultShowSpeakersPreference = typeof props.showSpeakers === 'boolean' ? props.showSpeakers : true;
+  // const defaultShowTimecodesPreference = typeof props.showTimecodes === 'boolean' ? props.showTimecodes : true;
+  // const [showSpeakers, setShowSpeakers] = useState(defaultShowSpeakersPreference);
+  // const [showTimecodes, setShowTimecodes] = useState(defaultShowTimecodesPreference);
+  // const [speakerOptions, setSpeakerOptions] = useState([]);
+  // const [showSpeakersCheatShet, setShowSpeakersCheatShet] = useState(false);
+  // const [saveTimer, setSaveTimer] = useState(null);
+  // const [isPauseWhiletyping, setIsPauseWhiletyping] = useState(false);
+  // const [isProcessing, setIsProcessing] = useState(false);
+  // // used isContentModified to avoid unecessarily run alignment if the slate value contnet has not been modified by the user since
+  // // last save or alignment
+  // const [isContentModified, setIsContentIsModified] = useState(false);
+
+  // useEffect(() => {
+  //   if (isProcessing) {
+  //     document.body.style.cursor = 'wait';
+  //   } else {
+  //     document.body.style.cursor = 'default';
+  //   }
+  // }, [isProcessing]);
 
   useEffect(() => {
     if (props.transcriptData) {
@@ -125,7 +169,7 @@ export default function SlateTranscriptEditor(props) {
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
-      case "timedText":
+      case 'timedText':
         return <TimedTextElement {...props} />;
       default:
         return <DefaultElement {...props} />;
@@ -137,7 +181,7 @@ export default function SlateTranscriptEditor(props) {
       return (
         <span
           onDoubleClick={handleTimedTextClick}
-          className={"timecode text"}
+          className={'timecode text'}
           data-start={children.props.parent.start}
           data-previous-timings={children.props.parent.previousTimings}
           title={children.props.parent.start}
@@ -165,8 +209,8 @@ export default function SlateTranscriptEditor(props) {
    */
   const handleSetSpeakerName = (element) => {
     const pathToCurrentNode = ReactEditor.findPath(editor, element);
-    const oldSpeakerName = element.speaker.toUpperCase();
-    const newSpeakerName = prompt("Change speaker name", oldSpeakerName);
+    const oldSpeakerName = element.speaker;
+    const newSpeakerName = prompt('Change speaker name', oldSpeakerName);
     if (newSpeakerName) {
       // const isUpdateAllSpeakerInstances = confirm(`Would you like to replace all occurrences of ${oldSpeakerName} with ${newSpeakerName}?`);
       const isUpdateAllSpeakerInstances = true;
@@ -175,20 +219,15 @@ export default function SlateTranscriptEditor(props) {
         // Apply transformation to the whole doc, where speaker matches old spekaer name, and set it to new one
         Transforms.setNodes(
           editor,
-          { type: "timedText", speaker: newSpeakerName },
+          { type: 'timedText', speaker: newSpeakerName },
           {
             at: rangeForTheWholeEditor,
-            match: (node) =>
-              node.type === "timedText" && node.speaker === oldSpeakerName,
+            match: (node) => node.type === 'timedText' && node.speaker.toLowerCase() === oldSpeakerName.toLowerCase(),
           }
         );
       } else {
         // only apply speaker name transformation to current element
-        Transforms.setNodes(
-          editor,
-          { type: "timedText", speaker: newSpeakerName },
-          { at: pathToCurrentNode }
-        );
+        Transforms.setNodes(editor, { type: 'timedText', speaker: newSpeakerName }, { at: pathToCurrentNode });
       }
     }
   };
@@ -214,19 +253,11 @@ export default function SlateTranscriptEditor(props) {
     return (
       <Row {...props.attributes}>
         {showTimecodes && (
-          <Col
-            contentEditable={false}
-            xs={4}
-            sm={2}
-            md={4}
-            lg={3}
-            xl={2}
-            className={"p-t-2 text-truncate"}
-          >
+          <Col contentEditable={false} xs={4} sm={2} md={4} lg={3} xl={2} className={'p-t-2 text-truncate'}>
             <code
               contentEditable={false}
-              style={{ cursor: "pointer" }}
-              className={"timecode text-muted unselectable"}
+              style={{ cursor: 'pointer' }}
+              className={'timecode text-muted unselectable'}
               onClick={handleTimedTextClick}
               title={props.element.startTimecode}
               data-start={props.element.start}
@@ -236,40 +267,26 @@ export default function SlateTranscriptEditor(props) {
           </Col>
         )}
         {showSpeakers && (
-          <Col
-            contentEditable={false}
-            xs={8}
-            sm={10}
-            md={8}
-            lg={3}
-            xl={3}
-            className={"p-t-2 text-truncate"}
-          >
+          <Col contentEditable={false} xs={8} sm={10} md={8} lg={3} xl={3} className={'p-t-2 text-truncate'}>
             <span
               contentEditable={false}
-              className={"text-truncate text-muted unselectable"}
+              className={'text-truncate text-muted unselectable'}
               style={{
-                cursor: "pointer",
-                width: "100%",
-                fontColor: "red",
+                cursor: 'pointer',
+                width: '100%',
+                textTransform: 'uppercase',
               }}
-              title={props.element.speaker.toUpperCase()}
+              // title={props.element.speaker.toUpperCase()}
+              title={props.element.speaker}
               onClick={handleSetSpeakerName.bind(this, props.element)}
             >
-              {" "}
-              {props.element.speaker.toUpperCase()}
+              {' '}
+              {props.element.speaker}
             </span>
           </Col>
         )}
 
-        <Col
-          xs={12}
-          sm={12}
-          md={12}
-          lg={textLg}
-          xl={textXl}
-          className={"p-t-2 mx-auto"}
-        >
+        <Col xs={12} sm={12} md={12} lg={textLg} xl={textXl} className={'p-t-2 mx-auto'}>
           {props.children}
         </Col>
       </Row>
@@ -281,7 +298,7 @@ export default function SlateTranscriptEditor(props) {
   };
 
   const handleTimedTextClick = (e) => {
-    if (e.target.classList.contains("timecode")) {
+    if (e.target.classList.contains('timecode')) {
       // eslint-disable-next-line
       const start = e.target.dataset.start;
       // if (mediaRef && mediaRef.current) {
@@ -312,35 +329,22 @@ export default function SlateTranscriptEditor(props) {
   const generatePreviousTimingsUpToCurrent = (currentTime) => {
     // edge case - empty transcription
     if (isEmpty(props.transcriptData)) {
-      return "";
+      return '';
     }
-    const lastWordStartTime =
-      props.transcriptData.words[props.transcriptData.words.length - 1].start;
+    const lastWordStartTime = props.transcriptData.words[props.transcriptData.words.length - 1].start;
     const lastWordStartTimeInt = parseInt(lastWordStartTime);
     const emptyListOfTimes = Array(lastWordStartTimeInt);
     const listOfTimesInt = [...emptyListOfTimes.keys()];
-    const listOfTimesUpToCurrentTimeInt = listOfTimesInt.splice(
-      0,
-      currentTime,
-      0
-    );
-    const stringlistOfTimesUpToCurrentTimeInt = listOfTimesUpToCurrentTimeInt.join(
-      " "
-    );
+    const listOfTimesUpToCurrentTimeInt = listOfTimesInt.splice(0, currentTime, 0);
+    const stringlistOfTimesUpToCurrentTimeInt = listOfTimesUpToCurrentTimeInt.join(' ');
     return stringlistOfTimesUpToCurrentTimeInt;
   };
 
   const getMediaType = () => {
     const clipExt = path.extname(props.mediaUrl);
-    let tmpMediaType = props.mediaType ? props.mediaType : "video";
-    if (
-      clipExt === ".wav" ||
-      clipExt === ".mp3" ||
-      clipExt === ".m4a" ||
-      clipExt === ".flac" ||
-      clipExt === ".aiff"
-    ) {
-      tmpMediaType = "audio";
+    let tmpMediaType = props.mediaType ? props.mediaType : 'video';
+    if (clipExt === '.wav' || clipExt === '.mp3' || clipExt === '.m4a' || clipExt === '.flac' || clipExt === '.aiff') {
+      tmpMediaType = 'audio';
     }
     return tmpMediaType;
   };
@@ -349,23 +353,22 @@ export default function SlateTranscriptEditor(props) {
     <Container
       fluid
       style={{
-        backgroundColor: "#fff",
-        paddingTop: "1em",
-        marginLeft: "auto",
-        marginRight: "auto",
-        justifyContent: "center",
+        backgroundColor: '#fff',
+        paddingTop: '1em',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        justifyContent: 'center',
       }}
     >
       <style scoped>
-        {`  .timecode[data-previous-timings*="${generatePreviousTimingsUpToCurrent(
-          parseInt(currentTime)
-        )}"]{
+        {`
+              /* Next words */
+              .timecode[data-previous-timings*="${
+                mediaRef && mediaRef.current && mediaRef.current.duration && generatePreviousTimingsUpToCurrent(parseInt(currentTime))
+              }"]{
                 color:  #c8c8c8 !important;
-            }`}
-
-        {`span.Word[data-start="${parseInt(
-          currentTime
-        )}"] { background-color: #a2ffa2 }`}
+              }
+          `}
       </style>
       <style scoped>
         {`.editor-wrapper-container{
@@ -398,43 +401,23 @@ export default function SlateTranscriptEditor(props) {
               `}
       </style>
       {props.showTitle ? (
-        <OverlayTrigger
-          delay={TOOTLIP_LONGER_DELAY}
-          placement={"bottom"}
-          overlay={<Tooltip id="tooltip-disabled"> {props.title}</Tooltip>}
-        >
-          <h3 className={"text-truncate text-left"}>
+        <OverlayTrigger delay={TOOTLIP_LONGER_DELAY} placement={'bottom'} overlay={<Tooltip id="tooltip-disabled"> {props.title}</Tooltip>}>
+          <h3 className={'text-truncate text-left'}>
             <small className="text-muted">{props.title}</small>
           </h3>
         </OverlayTrigger>
       ) : null}
       <Row
         style={{
-          justifyContent: "center",
+          justifyContent: 'center',
         }}
       >
         <Col
           xs={{ span: 12, order: 3 }}
-          sm={
-            getMediaType() === "audio"
-              ? { span: 10, order: 2, offset: 1 }
-              : { span: 7, order: 2 }
-          }
-          md={
-            getMediaType() === "audio"
-              ? { span: 10, order: 2, offset: 1 }
-              : { span: 7, order: 2 }
-          }
-          lg={
-            getMediaType() === "audio"
-              ? { span: 8, order: 2, offset: 2 }
-              : { span: 8, order: 2 }
-          }
-          xl={
-            getMediaType() === "audio"
-              ? { span: 8, order: 2, offset: 2 }
-              : { span: 7, order: 2 }
-          }
+          sm={getMediaType() === 'audio' ? { span: 10, order: 2, offset: 1 } : { span: 7, order: 2 }}
+          md={getMediaType() === 'audio' ? { span: 10, order: 2, offset: 1 } : { span: 7, order: 2 }}
+          lg={getMediaType() === 'audio' ? { span: 8, order: 2, offset: 2 } : { span: 8, order: 2 }}
+          xl={getMediaType() === 'audio' ? { span: 8, order: 2, offset: 2 } : { span: 7, order: 2 }}
         >
           {value.length !== 0 ? (
             <>
@@ -449,11 +432,7 @@ export default function SlateTranscriptEditor(props) {
                     return setValue(value);
                   }}
                 >
-                  <Editable
-                    readOnly={true}
-                    renderElement={renderElement}
-                    renderLeaf={renderLeaf}
-                  />
+                  <Editable readOnly={true} renderElement={renderElement} renderLeaf={renderLeaf} />
                 </Slate>
               </section>
             </>
@@ -487,6 +466,6 @@ SlateTranscriptEditor.defaultProps = {
   showTitle: false,
   showTimecodes: true,
   showSpeakers: true,
-  mediaType: "digitalpaperedit",
+  mediaType: 'digitalpaperedit',
   isEditable: true,
 };
